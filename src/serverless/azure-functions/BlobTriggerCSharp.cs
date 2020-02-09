@@ -9,9 +9,24 @@ namespace Serverless.Lambdas
     public static class BlobTriggerCSharp
     {
         [FunctionName("BlobTriggerCSharp")]
-        public static void Run([BlobTrigger("samples-workitems/{name}", Connection = "AzureWebJobsStorage")]Stream myBlob, string name, ILogger log)
+        public static void Run(
+            // uploaded:       images/isuuer.jpg
+            // I will upload:  images/isuuer.min.jpg
+            [BlobTrigger("images/{name}.{ext}",
+            Connection = "blob_connection")]
+            Stream myBlob,
+            [Blob("imagesmin/{name}.{ext}",
+            FileAccess.Write,
+            Connection="blob_connection")]
+            Stream minified,
+            string name, string ext,
+            ILogger log
+            )
         {
-            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
+            if (ext.Contains("min"))
+                return;
+
+           
         }
     }
 }
